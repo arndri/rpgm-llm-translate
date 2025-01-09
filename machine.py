@@ -15,21 +15,19 @@ class TranslationMachine:
             soup = BeautifulSoup(file.read(), 'html.parser')
         
         original_texts = []
-        for row in soup.find_all('tr')[1:]:  # Skip header row
+        for row in soup.find_all('tr')[1:]:
             text = row.find('td').text.strip()
             if text:
                 original_texts.append(text)
         
         translations = [self.translate_text(text) for text in original_texts]
         
-        # Update the HTML with translations
-        rows = soup.find_all('tr')[1:]  # Skip header row
+        rows = soup.find_all('tr')[1:]
         for row, translation in zip(rows, translations):
             cells = row.find_all('td')
-            if len(cells) > 1:  # Ensure there's a cell for translation
+            if len(cells) > 1:
                 cells[1].string = translation
         
-        # Save updated HTML
         output_path = os.path.splitext(file_path)[0] + '_translated.html'
         with open(output_path, 'w', encoding='utf-8') as file:
             file.write(str(soup))

@@ -41,7 +41,6 @@ class RPGMTranslatorApp(QMainWindow):
 
         layout.addSpacing(20)
         
-        # Create horizontal layout for buttons
         button_layout = QHBoxLayout()
         
         self.select_button = QPushButton('Select HTML File')
@@ -51,7 +50,7 @@ class RPGMTranslatorApp(QMainWindow):
         
         self.translate_button = QPushButton('Translate')
         self.translate_button.setFixedSize(200, 40)
-        self.translate_button.setEnabled(False)  # Disabled until file is selected
+        self.translate_button.setEnabled(False)
         button_layout.addWidget(self.translate_button)
         
         layout.addLayout(button_layout)
@@ -79,7 +78,7 @@ class RPGMTranslatorApp(QMainWindow):
             self.file_label.setText(f'Selected file: {filename}')
             self.status_label.setText('File loaded successfully!')
             self.status_label.setStyleSheet('color: green')
-            self.translate_button.setEnabled(True)  # Enable translate button
+            self.translate_button.setEnabled(True)
 
 def main():
     app = QApplication(sys.argv)
