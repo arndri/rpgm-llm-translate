@@ -46,6 +46,5 @@ def connect_to_ui(ui_instance):
             except Exception as e:
                 ui_instance.status_label.setText(f'Error during translation: {str(e)}')
                 ui_instance.status_label.setStyleSheet('color: red')
-    
-    # Connect translation handler to the translate button
+                
     ui_instance.translate_button.clicked.connect(handle_translation)
