@@ -1,41 +1,35 @@
-from transformers import AutoModelForSeq2SeqGeneration, AutoTokenizer
-import torch
-import pandas as pd
+from transformers import pipeline
 from bs4 import BeautifulSoup
 import os
 
 class TranslationMachine:
     def __init__(self):
-        self.model_name = "Mitsua/elan-mt-bt-ja-en"
-        self.model = AutoModelForSeq2SeqGeneration.from_pretrained(self.model_name)
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.model.to(self.device)
+        self.translator = pipeline('translation', model='Mitsua/elan-mt-bt-ja-en')
 
     def translate_text(self, text):
-        inputs = self.tokenizer(text, return_tensors="pt", padding=True).to(self.device)
-        outputs = self.model.generate(**inputs, max_length=128)
-        translation = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
-        return translation
+        translation = self.translator(text)
+        return translation[0]['translation_text']
 
     def process_html_file(self, file_path):
         with open(file_path, 'r', encoding='utf-8') as file:
             soup = BeautifulSoup(file.read(), 'html.parser')
         
         original_texts = []
-        for row in soup.find_all('tr')[1:]:
+        for row in soup.find_all('tr')[1:]:  # Skip header row
             text = row.find('td').text.strip()
             if text:
                 original_texts.append(text)
         
         translations = [self.translate_text(text) for text in original_texts]
         
-        rows = soup.find_all('tr')[1:]
+        # Update the HTML with translations
+        rows = soup.find_all('tr')[1:]  # Skip header row
         for row, translation in zip(rows, translations):
             cells = row.find_all('td')
-            if len(cells) > 1:
+            if len(cells) > 1:  # Ensure there's a cell for translation
                 cells[1].string = translation
-
+        
+        # Save updated HTML
         output_path = os.path.splitext(file_path)[0] + '_translated.html'
         with open(output_path, 'w', encoding='utf-8') as file:
             file.write(str(soup))
@@ -55,5 +49,5 @@ def connect_to_ui(ui_instance):
                 ui_instance.status_label.setText(f'Error during translation: {str(e)}')
                 ui_instance.status_label.setStyleSheet('color: red')
     
-    ui_instance.select_button.clicked.disconnect()
-    ui_instance.select_button.clicked.connect(handle_translation)
+    # Connect translation handler to the translate button
+    ui_instance.translate_button.clicked.connect(handle_translation)

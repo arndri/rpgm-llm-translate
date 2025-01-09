@@ -7,7 +7,8 @@ from PyQt6.QtWidgets import (
     QVBoxLayout, 
     QWidget,
     QFileDialog,
-    QMessageBox
+    QMessageBox,
+    QHBoxLayout
 )
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
@@ -39,10 +40,21 @@ class RPGMTranslatorApp(QMainWindow):
         layout.addWidget(subtitle_label)
 
         layout.addSpacing(20)
+        
+        # Create horizontal layout for buttons
+        button_layout = QHBoxLayout()
+        
         self.select_button = QPushButton('Select HTML File')
         self.select_button.setFixedSize(200, 40)
         self.select_button.clicked.connect(self.select_file)
-        layout.addWidget(self.select_button, alignment=Qt.AlignmentFlag.AlignCenter)
+        button_layout.addWidget(self.select_button)
+        
+        self.translate_button = QPushButton('Translate')
+        self.translate_button.setFixedSize(200, 40)
+        self.translate_button.setEnabled(False)  # Disabled until file is selected
+        button_layout.addWidget(self.translate_button)
+        
+        layout.addLayout(button_layout)
 
         self.file_label = QLabel('No file selected')
         self.file_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -67,6 +79,7 @@ class RPGMTranslatorApp(QMainWindow):
             self.file_label.setText(f'Selected file: {filename}')
             self.status_label.setText('File loaded successfully!')
             self.status_label.setStyleSheet('color: green')
+            self.translate_button.setEnabled(True)  # Enable translate button
 
 def main():
     app = QApplication(sys.argv)
