@@ -67,7 +67,7 @@ class RPGMTranslatorApp(QMainWindow):
     def select_file(self):
         file_path, _ = QFileDialog.getOpenFileName(
             self,
-            "Select HTML File",
+            "Select HTML File (You can use Translator+++ to extract the html of RPGM games)",
             "",
             "HTML files (*.html)"
         )
